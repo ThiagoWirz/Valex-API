@@ -27,10 +27,7 @@ export async function createCard(employeeId: number, type: cardRepository.Transa
 
 export async function activateCard(cardId: number, securityCode: string, password:string) {
 
-  const card = await cardRepository.findById(cardId)
-  if(!card){
-    throw {type: "not_found", message: "Card not Found"}
-  }
+  const card = await cardUtils.checkRegisteredCard(cardId);
 
   if(card.password){
     throw {type: "conflict", message: "Card already activated "}
