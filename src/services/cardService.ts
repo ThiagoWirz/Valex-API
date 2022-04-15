@@ -2,6 +2,8 @@ import * as companyRepository from "../repositories/companyRepository.js"
 import * as employeeRepository from "../repositories/employeeRepository.js"
 import * as cardRepository from "../repositories/cardRepository.js"
 import * as cardUtils from "../utils/cardUtils.js"
+
+
 export async function createCard(employeeId: number, type: cardRepository.TransactionTypes, apiKey: string) {
   
   const existCompany = await companyRepository.findByApiKey(apiKey)
@@ -22,6 +24,12 @@ export async function createCard(employeeId: number, type: cardRepository.Transa
   const card = cardUtils.formatCardData(employeeId, cardName, type)
 
   await cardRepository.insert(card);
+}
 
-  
+export async function activateCard(cardId: number, securityCode: string, password:string) {
+
+  const card = await cardRepository.findById(cardId)
+  if(!card){
+    throw {type: "not_found", message: "Card not Found"}
+  }
 }
