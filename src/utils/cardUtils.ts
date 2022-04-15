@@ -27,7 +27,7 @@ export function formatCardData(employeeId: number, cardName: string, type: cardR
     password: null,
     isVirtual: false,
     originalCardId: null,
-    isBlocked: true,
+    isBlocked: false,
     type
   }
   return card

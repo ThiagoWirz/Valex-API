@@ -2,6 +2,7 @@ import * as companyRepository from "../repositories/companyRepository.js"
 import * as employeeRepository from "../repositories/employeeRepository.js"
 import * as cardRepository from "../repositories/cardRepository.js"
 import * as cardUtils from "../utils/cardUtils.js"
+import dayjs from "dayjs"
 
 
 export async function createCard(employeeId: number, type: cardRepository.TransactionTypes, apiKey: string) {
@@ -32,4 +33,10 @@ export async function activateCard(cardId: number, securityCode: string, passwor
   if(!card){
     throw {type: "not_found", message: "Card not Found"}
   }
+
+  if(card.password){
+    throw {type: "conflict", message: "Card already activated "}
+  }
+
+  
 }
