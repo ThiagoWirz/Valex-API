@@ -1,4 +1,4 @@
-import * as companyRepository from "../repositories/companyRepository.js"
+import * as companyUtils from "../utils/companyUtils.js"
 import * as employeeRepository from "../repositories/employeeRepository.js"
 import * as cardRepository from "../repositories/cardRepository.js"
 import * as cardUtils from "../utils/cardUtils.js"
@@ -7,10 +7,8 @@ import bcrypt from "bcrypt"
 
 export async function createCard(employeeId: number, type: cardRepository.TransactionTypes, apiKey: string) {
   
-  const existCompany = await companyRepository.findByApiKey(apiKey)
-  if(!existCompany){
-    throw {type: "not_found", message: "Company not found"}
-  }
+  await companyUtils.checkCompany(apiKey)
+
   const employee = await employeeRepository.findById(employeeId)
   if(!employee){
     throw {type: "not_found", message: "Employee not found"}
