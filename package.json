@@ -1,9 +1,11 @@
 {
   "name": "valex",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dayjs": "^1.11.0",
     "dotenv": "^16.0.0",

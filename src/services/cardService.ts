@@ -1,7 +1,7 @@
 import * as companyRepository from "../repositories/companyRepository.js"
 import * as employeeRepository from "../repositories/employeeRepository.js"
 import * as cardRepository from "../repositories/cardRepository.js"
-import { formatCardName } from "../utils/cardUtils.js"
+import * as cardUtils from "../utils/cardUtils.js"
 export async function createCard(employeeId: number, type: cardRepository.TransactionTypes, apiKey: string) {
   
   const existCompany = await companyRepository.findByApiKey(apiKey)
@@ -16,6 +16,12 @@ export async function createCard(employeeId: number, type: cardRepository.Transa
   if(employeeCard){
     throw {type: "conflict", message: "Employee cannot register a second card of the same type"}
   }
-  const cardName = formatCardName(employee.fullName)
+  const cardName = cardUtils.formatCardName(employee.fullName)
+
+
+  const card = cardUtils.formatCardData(employeeId, cardName, type)
+
+  await cardRepository.insert(card);
+
   
 }
