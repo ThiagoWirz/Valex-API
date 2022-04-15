@@ -1,6 +1,7 @@
 import * as companyRepository from "../repositories/companyRepository.js"
 import * as employeeRepository from "../repositories/employeeRepository.js"
-export async function createCard(employeeId: number, type: string, apiKey: string) {
+import * as cardRepository from "../repositories/cardRepository.js"
+export async function createCard(employeeId: number, type: cardRepository.TransactionTypes, apiKey: string) {
   
   const existCompany = await companyRepository.findByApiKey(apiKey)
   if(!existCompany){
@@ -9,5 +10,9 @@ export async function createCard(employeeId: number, type: string, apiKey: strin
   const existEmployee = await employeeRepository.findById(employeeId)
   if(!existEmployee){
     throw {type: "not_found", message: "Employee not found"}
+  }
+  const employeeCard = await cardRepository.findByTypeAndEmployeeId(type, employeeId)
+  if(employeeCard){
+    throw {type: "conflict", message: "Employee cannot register a second card of the same type"}
   }
 }
