@@ -3,6 +3,7 @@ import * as employeeRepository from "../repositories/employeeRepository.js"
 import * as cardRepository from "../repositories/cardRepository.js"
 import * as cardUtils from "../utils/cardUtils.js"
 import dayjs from "dayjs"
+import bcrypt from "bcrypt"
 
 
 export async function createCard(employeeId: number, type: cardRepository.TransactionTypes, apiKey: string) {
@@ -36,6 +37,10 @@ export async function activateCard(cardId: number, securityCode: string, passwor
 
   if(card.password){
     throw {type: "conflict", message: "Card already activated "}
+  }
+
+  if(!bcrypt.compareSync(card.securityCode, securityCode)){
+    throw {type: "forbidden", message: "Security code does not match"}
   }
 
   
