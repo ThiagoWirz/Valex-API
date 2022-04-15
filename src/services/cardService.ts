@@ -2,7 +2,6 @@ import * as companyRepository from "../repositories/companyRepository.js"
 import * as employeeRepository from "../repositories/employeeRepository.js"
 import * as cardRepository from "../repositories/cardRepository.js"
 import * as cardUtils from "../utils/cardUtils.js"
-import dayjs from "dayjs"
 import bcrypt from "bcrypt"
 
 
@@ -39,9 +38,13 @@ export async function activateCard(cardId: number, securityCode: string, passwor
     throw {type: "conflict", message: "Card already activated "}
   }
 
+  cardUtils.checkExpirationDate(card.expirationDate)
+
   if(!bcrypt.compareSync(card.securityCode, securityCode)){
     throw {type: "forbidden", message: "Security code does not match"}
   }
 
-  
+  const hashPassword = bcrypt.hashSync(password, 10)
+
+  await cardRepository.update(cardId, {password:hashPassword, isBlocked: false})
 }
