@@ -18,11 +18,13 @@ export function formatCardName(employeeName: string){
 }
 
 export function formatCardData(employeeId: number, cardName: string, type: cardRepository.TransactionTypes){
+  const CVV = faker.finance.creditCardCVV()
+  console.log(CVV)
   const card: cardRepository.CardInsertData = {
     employeeId,
     number: faker.finance.creditCardNumber("MasterCard"),
     cardholderName: cardName,
-    securityCode: bcrypt.hashSync(faker.finance.creditCardCVV(), 10),
+    securityCode: bcrypt.hashSync(CVV, 10),
     expirationDate: dayjs(Date.now()).add(5, "year").format("MM/YY"),
     password: null,
     isVirtual: false,

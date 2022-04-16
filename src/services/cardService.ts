@@ -35,8 +35,8 @@ export async function activateCard(cardId: number, securityCode: string, passwor
   }
 
   checkExpirationDate(card.expirationDate)
-
-  if(!bcrypt.compareSync(card.securityCode, securityCode)){
+  console.log(securityCode)
+  if(!bcrypt.compareSync(securityCode, card.securityCode)){
     throw {type: "forbidden", message: "Security code does not match"}
   }
 
