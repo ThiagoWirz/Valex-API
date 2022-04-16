@@ -35,7 +35,6 @@ export async function activateCard(cardId: number, securityCode: string, passwor
   }
 
   checkExpirationDate(card.expirationDate)
-  console.log(securityCode)
   if(!bcrypt.compareSync(securityCode, card.securityCode)){
     throw {type: "forbidden", message: "Security code does not match"}
   }
@@ -44,6 +43,11 @@ export async function activateCard(cardId: number, securityCode: string, passwor
 
   await cardRepository.update(cardId, {password:hashPassword, isBlocked: false})
 }
+
+export async function getBalance(cardId: number){
+  const card = await checkRegisteredCard(cardId)
+}
+
 
 export async function checkRegisteredCard(cardId: number){
   const card = await cardRepository.findById(cardId)
