@@ -1,16 +1,9 @@
-export function calculateBalance(recharges:any[], trasanctions:any[]){
-  const sumOfRecharges = sumOfValues(recharges, "amount")
-  const sumOfTransactions = sumOfValues(trasanctions, "amount")
+export function calculateBalance(recharges:any[], transactions:any[]){
 
-  return sumOfRecharges - sumOfTransactions
-}
-
-
-
-
-export function sumOfValues(values: any[], type: string){
+  let sumOfRecharges = 0
+  let sumOfTransactions = 0
+  recharges.forEach(recharge => sumOfRecharges += recharge.amount)
+  transactions.forEach(transaction => sumOfTransactions += transaction.amount)
   
-  const allValues = values.map(value => value[type])
-  const sum = allValues.reduce((current, sum) => sum + current, 0)
-  return sum
+  return sumOfRecharges - sumOfTransactions
 }
