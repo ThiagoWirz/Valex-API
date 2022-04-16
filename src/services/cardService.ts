@@ -2,6 +2,8 @@ import * as companyService from "./companyService.js"
 import * as employeeRepository from "../repositories/employeeRepository.js"
 import * as cardRepository from "../repositories/cardRepository.js"
 import * as cardUtils from "../utils/cardUtils.js"
+import * as paymentRepository from "../repositories/paymentRepository.js"
+import * as recahargeRepository from "../repositories/rechargeRepository.js"
 import bcrypt from "bcrypt"
 import dayjs from "dayjs"
 
@@ -45,7 +47,9 @@ export async function activateCard(cardId: number, securityCode: string, passwor
 }
 
 export async function getBalance(cardId: number){
-  const card = await checkRegisteredCard(cardId)
+  await checkRegisteredCard(cardId)
+  const trasanction = await paymentRepository.findByCardId(cardId)
+  const recharges = await recahargeRepository.findByCardId(cardId)
 }
 
 
