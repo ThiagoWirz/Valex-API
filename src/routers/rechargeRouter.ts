@@ -5,6 +5,6 @@ import amountSchema from "../schemas/amountSchema.js";
 
 const rechargeRouter = Router();
 
-rechargeRouter.post("/cards/:id/recharge", validateSchema(amountSchema), rechargeController.rechargeCard)
+rechargeRouter.post("/recharge/cards/:id", validateSchema(amountSchema), rechargeController.rechargeCard)
 
 export default rechargeRouter
