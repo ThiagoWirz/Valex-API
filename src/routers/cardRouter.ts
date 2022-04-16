@@ -7,6 +7,6 @@ import cardPasswordSchema from "../schemas/cardPasswordSchema.js"
 const cardRouter = Router()
 
 cardRouter.post('/cards',validateSchema(cardSchema), cardController.createCard)
-cardRouter.put('/cards/activate', validateSchema(cardPasswordSchema), cardController.activateCard )
+cardRouter.put('/cards/:id/activate', validateSchema(cardPasswordSchema), cardController.activateCard )
 
 export default cardRouter
