@@ -41,11 +41,3 @@ export function checkExpirationDate(cardDate: string){
     throw {type: "forbidden", message: "Card expired"}
   }
 }
-
-export async function checkRegisteredCard(cardId: number){
-  const card = await cardRepository.findById(cardId)
-  if(!card){
-    throw {type: "not_found", message: "Card not Found"}
-  }
-  return card
-}

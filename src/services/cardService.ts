@@ -1,4 +1,4 @@
-import * as companyUtils from "../utils/companyUtils.js"
+import * as companyService from "./companyService.js"
 import * as employeeRepository from "../repositories/employeeRepository.js"
 import * as cardRepository from "../repositories/cardRepository.js"
 import * as cardUtils from "../utils/cardUtils.js"
@@ -7,7 +7,7 @@ import bcrypt from "bcrypt"
 
 export async function createCard(employeeId: number, type: cardRepository.TransactionTypes, apiKey: string) {
   
-  await companyUtils.checkCompany(apiKey)
+  await companyService.checkCompany(apiKey)
 
   const employee = await employeeRepository.findById(employeeId)
   if(!employee){
@@ -27,7 +27,7 @@ export async function createCard(employeeId: number, type: cardRepository.Transa
 
 export async function activateCard(cardId: number, securityCode: string, password:string) {
 
-  const card = await cardUtils.checkRegisteredCard(cardId);
+  const card = await checkRegisteredCard(cardId);
 
   if(card.password){
     throw {type: "conflict", message: "Card already activated "}
@@ -42,4 +42,12 @@ export async function activateCard(cardId: number, securityCode: string, passwor
   const hashPassword = bcrypt.hashSync(password, 10)
 
   await cardRepository.update(cardId, {password:hashPassword, isBlocked: false})
+}
+
+export async function checkRegisteredCard(cardId: number){
+  const card = await cardRepository.findById(cardId)
+  if(!card){
+    throw {type: "not_found", message: "Card not Found"}
+  }
+  return card
 }
