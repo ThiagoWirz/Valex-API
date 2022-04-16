@@ -3,6 +3,7 @@ import * as employeeRepository from "../repositories/employeeRepository.js"
 import * as cardRepository from "../repositories/cardRepository.js"
 import * as cardUtils from "../utils/cardUtils.js"
 import bcrypt from "bcrypt"
+import dayjs from "dayjs"
 
 
 export async function createCard(employeeId: number, type: cardRepository.TransactionTypes, apiKey: string) {
@@ -33,7 +34,7 @@ export async function activateCard(cardId: number, securityCode: string, passwor
     throw {type: "conflict", message: "Card already activated "}
   }
 
-  cardUtils.checkExpirationDate(card.expirationDate)
+  checkExpirationDate(card.expirationDate)
 
   if(!bcrypt.compareSync(card.securityCode, securityCode)){
     throw {type: "forbidden", message: "Security code does not match"}
@@ -50,4 +51,13 @@ export async function checkRegisteredCard(cardId: number){
     throw {type: "not_found", message: "Card not Found"}
   }
   return card
+}
+
+export function checkExpirationDate(cardDate: string){
+  const expirationDate = dayjs(cardDate)
+  const today = dayjs(Date.now())
+
+  if(expirationDate.diff(today, "month") > 0){
+    throw {type: "forbidden", message: "Card expired"}
+  }
 }

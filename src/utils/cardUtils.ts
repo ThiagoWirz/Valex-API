@@ -32,12 +32,3 @@ export function formatCardData(employeeId: number, cardName: string, type: cardR
   }
   return card
 }
-
-export function checkExpirationDate(cardDate: string){
-  const expirationDate = dayjs(cardDate)
-  const today = dayjs(Date.now())
-
-  if(expirationDate.diff(today, "month") > 0){
-    throw {type: "forbidden", message: "Card expired"}
-  }
-}
