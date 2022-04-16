@@ -4,6 +4,7 @@ import * as cardRepository from "../repositories/cardRepository.js"
 import * as cardUtils from "../utils/cardUtils.js"
 import * as paymentRepository from "../repositories/paymentRepository.js"
 import * as recahargeRepository from "../repositories/rechargeRepository.js"
+import * as balanceUtils from "../utils/balanceUtils.js"
 import bcrypt from "bcrypt"
 import dayjs from "dayjs"
 
@@ -48,8 +49,16 @@ export async function activateCard(cardId: number, securityCode: string, passwor
 
 export async function getBalance(cardId: number){
   await checkRegisteredCard(cardId)
-  const trasanction = await paymentRepository.findByCardId(cardId)
+  const trasanctions = await paymentRepository.findByCardId(cardId)
   const recharges = await recahargeRepository.findByCardId(cardId)
+
+  const balance = balanceUtils.calculateBalance(recharges, trasanctions)
+
+  return {
+    balance, 
+    trasanctions,
+    recharges
+  }
 }
 
 
