@@ -4,6 +4,6 @@ import purchaseSchema from "../schemas/purchaseSchema.js"
 
 const purchaseRouter = Router()
 
-purchaseRouter.post("/purchase/cards/:cardId/businesses/:businessesId", validateSchema(purchaseSchema))
+purchaseRouter.post("/purchase/cards/:cardId/businesses/:businessId", validateSchema(purchaseSchema))
 
 export default purchaseRouter

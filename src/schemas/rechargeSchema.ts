@@ -1,7 +1,7 @@
 import joi from "joi"
 
-const amountSchema = joi.object({
+const rechargeSchema = joi.object({
   password: joi.number().min(1)
 })
 
-export default amountSchema
+export default rechargeSchema

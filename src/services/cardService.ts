@@ -78,3 +78,9 @@ export function checkExpirationDate(cardDate: string){
     throw {type: "forbidden", message: "Card expired"}
   }
 }
+
+export function checkPassword(password: string, hashPassword: string){
+  if(!bcrypt.compareSync(password, hashPassword)){
+    throw {type: "forbidden", message: "Wrong Password"}
+  }
+}
