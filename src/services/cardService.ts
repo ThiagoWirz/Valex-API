@@ -26,7 +26,7 @@ export async function createCard(employeeId: number, type: cardRepository.Transa
 
 export async function activateCard(cardId: number, securityCode: string, password:string) {
 
-  const card = await checkRegisteredCard(cardId);
+  const card = await getCard(cardId);
 
   checkIfCardHasPassword(card)
 
@@ -40,7 +40,7 @@ export async function activateCard(cardId: number, securityCode: string, passwor
 }
 
 export async function getBalance(cardId: number){
-  await checkRegisteredCard(cardId)
+  await getCard(cardId)
   const trasanctions = await paymentRepository.findByCardId(cardId)
   const recharges = await recahargeRepository.findByCardId(cardId)
 
@@ -53,8 +53,17 @@ export async function getBalance(cardId: number){
   }
 }
 
+export async function blockCard(cardId: number, password: string) {
+  const card = await getCard(cardId)
+  checkExpirationDate(card.expirationDate)
+  checkBlockedCard(card.isBlocked)
+  checkPassword(password, card.password)
 
-export async function checkRegisteredCard(cardId: number){
+  cardRepository.update(cardId, {isBlocked: true})
+}
+
+
+export async function getCard(cardId: number){
   const card = await cardRepository.findById(cardId)
   if(!card){
     throw {type: "not_found", message: "Card not Found"}
@@ -93,5 +102,11 @@ export function checkIfCardHasPassword(card: any){
 export function compareSecurityCode(securityCode: string, hashSecurityCode: string){
   if(!bcrypt.compareSync(securityCode, hashSecurityCode)){
     throw {type: "forbidden", message: "Security code does not match"}
+  }
+}
+
+export function checkBlockedCard(isBlocked: boolean){
+  if(isBlocked){
+    throw {type: "bad_request", message: "Card is already blocked"}
   }
 }

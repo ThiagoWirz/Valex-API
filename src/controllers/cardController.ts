@@ -25,3 +25,12 @@ export async function getBalance(req: Request, res: Response){
 
   res.status(200).send(balance)
 }
+
+export async function blockCard(req: Request, res: Response){
+  const {id} = req.params
+  const {password} = req.body
+
+  await cardService.blockCard(parseInt(id), password)
+
+  res.sendStatus(200)
+}
