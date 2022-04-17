@@ -1,9 +1,9 @@
 import * as companyService from "./companyService.js"
-import * as employeeRepository from "../repositories/employeeRepository.js"
 import * as cardRepository from "../repositories/cardRepository.js"
 import * as cardUtils from "../utils/cardUtils.js"
 import * as paymentRepository from "../repositories/paymentRepository.js"
 import * as recahargeRepository from "../repositories/rechargeRepository.js"
+import * as emplyeeService from "./employeeService.js"
 import * as balanceUtils from "../utils/balanceUtils.js"
 import bcrypt from "bcrypt"
 import dayjs from "dayjs"
@@ -13,16 +13,11 @@ export async function createCard(employeeId: number, type: cardRepository.Transa
   
   await companyService.checkCompany(apiKey)
 
-  const employee = await employeeRepository.findById(employeeId)
-  if(!employee){
-    throw {type: "not_found", message: "Employee not found"}
-  }
-  const employeeCard = await cardRepository.findByTypeAndEmployeeId(type, employeeId)
-  if(employeeCard){
-    throw {type: "conflict", message: "Employee cannot register a second card of the same type"}
-  }
-  const cardName = cardUtils.formatCardName(employee.fullName)
+  const employee =  await emplyeeService.getEmployeeById(employeeId)
 
+  await checkCardTypeAndEmployee(type, employeeId)
+  
+  const cardName = cardUtils.formatCardName(employee.fullName)
 
   const card = cardUtils.formatCardData(employeeId, cardName, type)
 
@@ -33,15 +28,12 @@ export async function activateCard(cardId: number, securityCode: string, passwor
 
   const card = await checkRegisteredCard(cardId);
 
-  if(card.password){
-    throw {type: "conflict", message: "Card already activated "}
-  }
+  checkIfCardHasPassword(card)
 
   checkExpirationDate(card.expirationDate)
-  if(!bcrypt.compareSync(securityCode, card.securityCode)){
-    throw {type: "forbidden", message: "Security code does not match"}
-  }
-
+  
+  compareSecurityCode(securityCode, card.securityCode)
+ 
   const hashPassword = bcrypt.hashSync(password, 10)
 
   await cardRepository.update(cardId, {password:hashPassword, isBlocked: false})
@@ -82,5 +74,24 @@ export function checkExpirationDate(cardDate: string){
 export function checkPassword(password: string, hashPassword: string){
   if(!bcrypt.compareSync(password, hashPassword)){
     throw {type: "forbidden", message: "Wrong Password"}
+  }
+}
+
+export async function checkCardTypeAndEmployee(cardType: cardRepository.TransactionTypes, employeeId: number){
+  const employeeCard = await cardRepository.findByTypeAndEmployeeId(cardType, employeeId)
+  if(employeeCard){
+    throw {type: "conflict", message: "Employee cannot register a second card of the same type"}
+  }
+}
+
+export function checkIfCardHasPassword(card: any){
+  if(card.password){
+    throw {type: "conflict", message: "Card already activated "}
+  }
+}
+
+export function compareSecurityCode(securityCode: string, hashSecurityCode: string){
+  if(!bcrypt.compareSync(securityCode, hashSecurityCode)){
+    throw {type: "forbidden", message: "Security code does not match"}
   }
 }
