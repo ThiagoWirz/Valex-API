@@ -53,14 +53,23 @@ export async function getBalance(cardId: number){
   }
 }
 
-export async function blockCard(cardId: number, password: string) {
+export async function blockCard(cardId: number, password: string, isBlocking: boolean) {
   const card = await getCard(cardId)
   checkExpirationDate(card.expirationDate)
-  checkBlockedCard(card.isBlocked)
+  checkBlockedCard(card.isBlocked, isBlocking)
   checkPassword(password, card.password)
 
-  cardRepository.update(cardId, {isBlocked: true})
+  cardRepository.update(cardId, {isBlocked: isBlocking})
 }
+
+// export async function unblockCard(cardId: number, password: string, isBlocking: b) {
+//   const card = await getCard(cardId)
+//   checkExpirationDate(card.expirationDate)
+//   checkBlockedCard(card.isBlocked, false)
+//   checkPassword(password, card.password)
+
+//   cardRepository.update(cardId, {isBlocked: false})
+// }
 
 
 export async function getCard(cardId: number){
@@ -105,8 +114,15 @@ export function compareSecurityCode(securityCode: string, hashSecurityCode: stri
   }
 }
 
-export function checkBlockedCard(isBlocked: boolean){
-  if(isBlocked){
-    throw {type: "bad_request", message: "Card is already blocked"}
+export function checkBlockedCard(isBlocked: boolean, isBlocking: boolean){
+
+  if(isBlocking){
+    if(isBlocked){
+      throw {type: "bad_request", message: "Card is already blocked"}
+    }
+  }else if(!isBlocking){
+    if(!isBlocked){
+      throw {type: "bad_request", message: "Card is already activated"}
+    }
   }
 }

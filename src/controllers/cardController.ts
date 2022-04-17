@@ -29,8 +29,19 @@ export async function getBalance(req: Request, res: Response){
 export async function blockCard(req: Request, res: Response){
   const {id} = req.params
   const {password} = req.body
+  const isBlocking = true
 
-  await cardService.blockCard(parseInt(id), password)
+  await cardService.blockCard(parseInt(id), password, isBlocking)
+
+  res.sendStatus(200)
+}
+
+export async function unblockCard(req: Request, res: Response){
+  const {id} = req.params
+  const {password} = req.body
+  const isBlocking = false
+
+  await cardService.blockCard(parseInt(id), password, isBlocking)
 
   res.sendStatus(200)
 }

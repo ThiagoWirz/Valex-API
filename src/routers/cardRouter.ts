@@ -11,5 +11,6 @@ cardRouter.post('/cards',validateSchema(cardSchema), cardController.createCard)
 cardRouter.put('/cards/:id/activate', validateSchema(activateCardSchema), cardController.activateCard )
 cardRouter.get("/cards/:id", cardController.getBalance)
 cardRouter.put("/cards/:id/block", validateSchema(passwordSchema), cardController.blockCard)
+cardRouter.put("/cards/:id/unblock", validateSchema(passwordSchema), cardController.unblockCard)
 
 export default cardRouter

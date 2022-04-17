@@ -3,7 +3,7 @@ import * as businessService from "./businessService.js"
 import * as paymentRepository from "../repositories/paymentRepository.js"
 
 export async function createPurchase(cardId: number, businessId: number, password: string, amount: number) {
-  const card = await cardService.checkRegisteredCard(cardId)
+  const card = await cardService.getCard(cardId)
 
   cardService.checkExpirationDate(card.expirationDate)
   cardService.checkPassword(password, card.password)
