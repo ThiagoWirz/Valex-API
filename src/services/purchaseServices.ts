@@ -5,6 +5,7 @@ import * as paymentRepository from "../repositories/paymentRepository.js"
 export async function createPurchase(cardId: number, businessId: number, password: string, amount: number) {
   const card = await cardService.getCard(cardId)
 
+cardService.checkBlockedCardForPurchase(card.isBlocked)
   cardService.checkExpirationDate(card.expirationDate)
   cardService.checkPassword(password, card.password)
 
