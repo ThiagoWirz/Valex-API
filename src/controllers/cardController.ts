@@ -60,3 +60,8 @@ export async function deleteVirtualCard(req: Request, res: Response){
 
   res.sendStatus(200)
 }
+
+export async function getCards(req: Request, res: Response) {
+  const cards = await cardService.getCards()
+  res.send(cards)
+}

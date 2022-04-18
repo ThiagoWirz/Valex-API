@@ -73,9 +73,9 @@ export async function blockAndUnblockCard(cardId: number, password: string, isBl
 }
 
 export async function createVirtualCard(originalCardId: number, password: string){
-  const originalCard = getCard(originalCardId)
+  const originalCard = await getCard(originalCardId)
   
-  checkPassword(password, (await originalCard).password)
+  checkPassword(password, originalCard.password)
 
   const cardsNumbers = await cardRepository.getCardNumber()
 
@@ -183,4 +183,8 @@ export function determineOriginalCardId(card: any){
     cardId = card.id
   }
   return cardId
+}
+
+export async function getCards() {
+  return await cardRepository.find()
 }

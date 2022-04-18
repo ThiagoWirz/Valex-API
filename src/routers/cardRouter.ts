@@ -14,5 +14,5 @@ cardRouter.get("/cards/:id", cardController.getBalance)
 cardRouter.put("/cards/:id/block", validateSchema(passwordSchema), cardController.blockAndUnblockCard)
 cardRouter.put("/cards/:id/unblock", validateSchema(passwordSchema), cardController.blockAndUnblockCard)
 cardRouter.delete('/cards/:id/virtual', validateSchema(passwordSchema), cardController.deleteVirtualCard)
-
+cardRouter.get("/cards",cardController.getCards )
 export default cardRouter
