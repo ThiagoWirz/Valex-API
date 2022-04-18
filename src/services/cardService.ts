@@ -55,11 +55,14 @@ export async function getBalance(cardId: number){
 
 export async function blockCard(cardId: number, password: string, isBlocking: boolean) {
   const card = await getCard(cardId)
+  checkIfIsVirtualForBlock(card.isVirtual)
   checkExpirationDate(card.expirationDate)
   checkBlockedCard(card.isBlocked, isBlocking)
   checkPassword(password, card.password)
+  const virtualCards = await cardRepository.findByOriginalCardId(cardId)
+  await updateVirtualCards(virtualCards, isBlocking)
 
-  cardRepository.update(cardId, {isBlocked: isBlocking})
+  await cardRepository.update(cardId, {isBlocked: isBlocking})
 }
 
 export async function createVirtualCard(originalCardId: number, password: string){
@@ -68,7 +71,16 @@ export async function createVirtualCard(originalCardId: number, password: string
 
   const virtualCard = cardUtils.formatVirtualCard(originalCard)
 
-  cardRepository.insert(virtualCard)
+  await cardRepository.insert(virtualCard)
+}
+
+export async function deleteVirtualCard(cardId: number, password: string){
+  const card = await getCard(cardId)
+
+  checkIfIsVirtualForCreation(card.isVirtual)
+  checkPassword(password, card.password)
+
+  await cardRepository.remove(cardId)
 }
 
 export async function getCard(cardId: number){
@@ -138,4 +150,22 @@ export async function getCardByDetails(number: string, cardholderName: string, e
       throw {type: "not_found", message: "Card not Found"}
     }
   return card
+}
+
+export function checkIfIsVirtualForCreation(isVirtual: boolean){
+    if(!isVirtual){
+      throw {type: "bad_request", message: "This card is not a virtual card"}
+    }
+}
+
+export function checkIfIsVirtualForBlock(isVirtual: boolean){
+  if(isVirtual){
+    throw { type: "bad_request", message: "Cannot block a virtual card" }
+  }
+}
+
+export async function updateVirtualCards(virtualCards: any[], isBlocking: boolean){
+  for(let virtualCard of virtualCards){
+    await cardRepository.update(virtualCard.id, {isBlocked: isBlocking})
+  }
 }

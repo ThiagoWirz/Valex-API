@@ -54,3 +54,12 @@ export async function createVirtualCard(req: Request, res: Response){
 
   res.sendStatus(201)
 }
+
+export async function deleteVirtualCard(req: Request, res: Response){
+  const {id} = req.params
+  const {password} = req.body
+
+  await cardService.deleteVirtualCard(parseInt(id), password)
+
+  res.sendStatus(200)
+}
