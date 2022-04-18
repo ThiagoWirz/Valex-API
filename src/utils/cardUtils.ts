@@ -34,3 +34,21 @@ export function formatCardData(employeeId: number, cardName: string, type: cardR
   }
   return card
 }
+
+export function formatVirtualCard(originalCard: any){
+  const CVV = faker.finance.creditCardCVV()
+  console.log(CVV)
+  const virtualCard: cardRepository.CardInsertData = {
+    employeeId: originalCard.employeeId,
+    number: faker.finance.creditCardNumber("MasterCard"),
+    cardholderName: originalCard.cardholderName,
+    securityCode: bcrypt.hashSync(CVV, 10),
+    expirationDate: dayjs(Date.now()).add(5, "year").format("MM/YY"),
+    password: originalCard.password,
+    isVirtual: true,
+    originalCardId: originalCard.id,
+    isBlocked: false,
+    type: originalCard.type
+  }
+  return virtualCard
+}

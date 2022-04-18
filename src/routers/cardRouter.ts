@@ -8,6 +8,7 @@ import passwordSchema from "../schemas/passwordSchema.js"
 const cardRouter = Router()
 
 cardRouter.post('/cards',validateSchema(cardSchema), cardController.createCard)
+cardRouter.post('/cards/:id/virtual', validateSchema(passwordSchema), cardController.createVirtualCard)
 cardRouter.put('/cards/:id/activate', validateSchema(activateCardSchema), cardController.activateCard )
 cardRouter.get("/cards/:id", cardController.getBalance)
 cardRouter.put("/cards/:id/block", validateSchema(passwordSchema), cardController.blockCard)

@@ -62,6 +62,15 @@ export async function blockCard(cardId: number, password: string, isBlocking: bo
   cardRepository.update(cardId, {isBlocked: isBlocking})
 }
 
+export async function createVirtualCard(originalCardId: number, password: string){
+  const originalCard = getCard(originalCardId)
+  checkPassword(password, (await originalCard).password)
+
+  const virtualCard = cardUtils.formatVirtualCard(originalCard)
+
+  cardRepository.insert(virtualCard)
+}
+
 export async function getCard(cardId: number){
   const card = await cardRepository.findById(cardId)
   if(!card){
@@ -119,7 +128,7 @@ export function checkBlockedCard(isBlocked: boolean, isBlocking: boolean){
 
 export function checkBlockedCardForPurchase(isBlocked: boolean){
   if(isBlocked){
-    throw {type: "bad_request", message: "Card is blocked"}
+    throw {type: "forbidden", message: "Card is blocked"}
   }
 }
 
