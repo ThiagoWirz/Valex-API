@@ -41,7 +41,9 @@ export async function activateCard(cardId: number, securityCode: string, passwor
 }
 
 export async function getBalance(cardId: number){
-  await getCard(cardId)
+  const card = await getCard(cardId)
+
+  cardId = determineOriginalCardId(card)
 
   const trasanctions = await paymentRepository.findByCardId(cardId)
 
