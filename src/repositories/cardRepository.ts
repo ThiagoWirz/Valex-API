@@ -124,7 +124,13 @@ export async function remove(id: number) {
 }
 
 export async function findByOriginalCardId(originalCardId: number) {
-  const {rows: cards} = await connection.query(`SELECT * FROM cards WHERE "originalCardId = $1`, [originalCardId])
+  const {rows: cards} = await connection.query(`SELECT * FROM cards WHERE "originalCardId" = $1`, [originalCardId])
 
   return cards
+}
+
+export async function getCardNumber() {
+  const {rows: cardNumbers} = await connection.query(`SELECT number FROM cards`)
+
+  return cardNumbers
 }

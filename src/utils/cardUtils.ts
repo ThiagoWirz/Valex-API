@@ -17,12 +17,15 @@ export function formatCardName(employeeName: string){
   return cardName.join(" ").toUpperCase()
 }
 
-export function formatCardData(employeeId: number, cardName: string, type: cardRepository.TransactionTypes){
+export function formatCardData(employeeId: number, cardName: string, type: cardRepository.TransactionTypes, cardsNumbers: any[]){
+  
+  const number = generateUniqueCardNumber(cardsNumbers)
   const CVV = faker.finance.creditCardCVV()
   console.log(CVV)
+
   const card: cardRepository.CardInsertData = {
     employeeId,
-    number: faker.finance.creditCardNumber("MasterCard"),
+    number,
     cardholderName: cardName,
     securityCode: bcrypt.hashSync(CVV, 10),
     expirationDate: dayjs(Date.now()).add(5, "year").format("MM/YY"),
@@ -35,12 +38,14 @@ export function formatCardData(employeeId: number, cardName: string, type: cardR
   return card
 }
 
-export function formatVirtualCard(originalCard: any){
+export function formatVirtualCard(originalCard: any, cardsNumbers: any[]){
+  const number = generateUniqueCardNumber(cardsNumbers)
   const CVV = faker.finance.creditCardCVV()
   console.log(CVV)
+
   const virtualCard: cardRepository.CardInsertData = {
     employeeId: originalCard.employeeId,
-    number: faker.finance.creditCardNumber("MasterCard"),
+    number,
     cardholderName: originalCard.cardholderName,
     securityCode: bcrypt.hashSync(CVV, 10),
     expirationDate: dayjs(Date.now()).add(5, "year").format("MM/YY"),
@@ -51,4 +56,12 @@ export function formatVirtualCard(originalCard: any){
     type: originalCard.type
   }
   return virtualCard
+}
+
+export function generateUniqueCardNumber(allCardsNumbers: any[]){
+  let number = faker.finance.creditCardNumber("MasterCard")
+  while(allCardsNumbers.includes(number)){
+    number = faker.finance.creditCardNumber("MasterCard")
+  }
+  return number
 }

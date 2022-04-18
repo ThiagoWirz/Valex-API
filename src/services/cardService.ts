@@ -19,7 +19,9 @@ export async function createCard(employeeId: number, type: cardRepository.Transa
   
   const cardName = cardUtils.formatCardName(employee.fullName)
 
-  const card = cardUtils.formatCardData(employeeId, cardName, type)
+  const cardsNumbers = await cardRepository.getCardNumber()
+
+  const card = cardUtils.formatCardData(employeeId, cardName, type, cardsNumbers)
 
   await cardRepository.insert(card);
 }
@@ -75,9 +77,11 @@ export async function createVirtualCard(originalCardId: number, password: string
   
   checkPassword(password, (await originalCard).password)
 
-  const virtualCard = cardUtils.formatVirtualCard(originalCard)
+  const cardsNumbers = await cardRepository.getCardNumber()
 
-  await cardRepository.insert(virtualCard)
+  const virtualCardData = cardUtils.formatVirtualCard(originalCard, cardsNumbers)
+
+  await cardRepository.insert(virtualCardData)
 }
 
 export async function deleteVirtualCard(cardId: number, password: string){
