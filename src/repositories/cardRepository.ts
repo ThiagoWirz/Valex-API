@@ -134,3 +134,21 @@ export async function getCardNumber() {
 
   return cardNumbers
 }
+
+
+export async function updateVirtualCards(id: number, cardData: CardUpdateData) {
+  const { objectColumns: cardColumns, objectValues: cardValues } =
+    mapObjectToUpdateQuery({
+      object: cardData,
+      offset: 2,
+    });
+
+  connection.query(
+    `
+    UPDATE cards
+      SET ${cardColumns}
+    WHERE $1= "originalCardId"
+  `,
+    [id, ...cardValues]
+  );
+}

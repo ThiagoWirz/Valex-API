@@ -67,7 +67,7 @@ export async function blockCard(cardId: number, password: string, isBlocking: bo
 
   const virtualCards = await cardRepository.findByOriginalCardId(cardId)
 
-  await updateVirtualCards(virtualCards, isBlocking)
+  await cardRepository.updateVirtualCards(cardId, {isBlocked: isBlocking})
 
   await cardRepository.update(cardId, {isBlocked: isBlocking})
 }
@@ -174,11 +174,6 @@ export function checkIfIsVirtual(isVirtual: boolean){
   }
 }
 
-export async function updateVirtualCards(virtualCards: any[], isBlocking: boolean){
-  for(let virtualCard of virtualCards){
-    await cardRepository.update(virtualCard.id, {isBlocked: isBlocking})
-  }
-}
 
 export function determineOriginalCardId(card: any){
   let cardId : number
