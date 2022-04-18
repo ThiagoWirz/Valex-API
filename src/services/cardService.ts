@@ -30,7 +30,7 @@ export async function activateCard(cardId: number, securityCode: string, passwor
 
   const card = await getCard(cardId);
 
-  checkIfIsVirtual(card.isVirtual)
+  checkIfIsVirtual(card.isVirtual, "activate")
   checkIfCardHasPassword(card)
   checkExpirationDate(card.expirationDate)
   compareSecurityCode(securityCode, card.securityCode)
@@ -62,7 +62,7 @@ export async function blockAndUnblockCard(cardId: number, password: string, isBl
 
   const card = await getCard(cardId)
 
-  checkIfIsVirtual(card.isVirtual)
+  checkIfIsVirtual(card.isVirtual, "block")
   checkExpirationDate(card.expirationDate)
   checkBlockedCard(card.isBlocked, isBlocking)
   checkPassword(password, card.password)
@@ -89,7 +89,7 @@ export async function createVirtualCard(originalCardId: number, password: string
 export async function deleteVirtualCard(cardId: number, password: string){
   const card = await getCard(cardId)
 
-  checkIfIsVirtualForCreation(card.isVirtual)
+  checkIfIsVirtual(card.isVirtual, "delete")
   checkPassword(password, card.password)
 
   await cardRepository.remove(cardId)
@@ -164,17 +164,29 @@ export async function getCardByDetails(number: string, cardholderName: string, e
   return card
 }
 
-export function checkIfIsVirtualForCreation(isVirtual: boolean){
+export function checkIfIsVirtual(isVirtual: boolean, type: string){
+  if(type === "activate" || type === "block"){
+    if(isVirtual){
+      throw { type: "bad_request", message: "Cannot activate or block a virtual card" }
+    }
+  }
+  if(type === "posPurchase"){
+    if(isVirtual){
+      throw { type: "bad_request", message: "Cannot use a virtual card for this purchase" }
+    }
+  }
+  if(type === "recharge"){
+    if(isVirtual){
+      throw { type: "bad_request", message: "Cannot recharge a virtual card" }
+    }
+  }
+  if(type === "delete"){
     if(!isVirtual){
       throw {type: "bad_request", message: "This card is not a virtual card"}
     }
-}
-
-export function checkIfIsVirtual(isVirtual: boolean){
-  if(isVirtual){
-    throw { type: "bad_request", message: "Cannot activate or block a virtual card" }
   }
 }
+
 
 
 export function determineOriginalCardId(card: any){

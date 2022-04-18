@@ -6,7 +6,7 @@ export async function createPurchase(cardId: number, businessId: number, passwor
   const card = await cardService.getCard(cardId)
 
   cardService.checkBlockedCardForPurchase(card.isBlocked)
-  cardService.checkIfIsVirtual(card.isVirtual)
+  cardService.checkIfIsVirtual(card.isVirtual, "posPurchase")
   cardService.checkExpirationDate(card.expirationDate)
   cardService.checkPassword(password, card.password)
 

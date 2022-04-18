@@ -8,7 +8,7 @@ export async function rechargeCard(cardId: number, amount: number, apiKey:string
   
   const card = await cardService.getCard(cardId)
 
-  cardService.checkIfIsVirtual(card.isVirtual)
+  cardService.checkIfIsVirtual(card.isVirtual, "recharge")
   cardService.checkExpirationDate(card.expirationDate)
 
   await rechargeRepository.insert({cardId, amount})
