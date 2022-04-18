@@ -56,7 +56,7 @@ export async function getBalance(cardId: number){
   }
 }
 
-export async function blockCard(cardId: number, password: string, isBlocking: boolean) {
+export async function blockAndUnblockCard(cardId: number, password: string, isBlocking: boolean) {
 
   const card = await getCard(cardId)
 

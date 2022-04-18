@@ -26,25 +26,22 @@ export async function getBalance(req: Request, res: Response){
   res.status(200).send(balance)
 }
 
-export async function blockCard(req: Request, res: Response){
+export async function blockAndUnblockCard(req: Request, res: Response){
   const {id} = req.params
   const {password} = req.body
-  const isBlocking = true
-
-  await cardService.blockCard(parseInt(id), password, isBlocking)
+  let isBlocking : boolean
+  const pathArray = req.path.split("/")
+  const path = pathArray[pathArray.length -1]
+  if(path === "block"){
+   isBlocking = true
+  } else if(path === "unblock"){
+    isBlocking = false
+  }
+  await cardService.blockAndUnblockCard(parseInt(id), password, isBlocking)
 
   res.sendStatus(200)
 }
 
-export async function unblockCard(req: Request, res: Response){
-  const {id} = req.params
-  const {password} = req.body
-  const isBlocking = false
-
-  await cardService.blockCard(parseInt(id), password, isBlocking)
-
-  res.sendStatus(200)
-}
 
 export async function createVirtualCard(req: Request, res: Response){
   const {id} = req.params
