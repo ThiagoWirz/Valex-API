@@ -9,3 +9,12 @@ export async function createPurchase(req: Request, res: Response) {
 
   res.sendStatus(200)
 }
+
+export async function onlinePurchase(req: Request, res: Response) {
+  const {businessId} = req.params
+  const {cardNumber, cardholderName, expirationDate, securityCode, amount} = req.body
+
+  await purchaseService.onlinePurchase(parseInt(businessId), cardNumber, cardholderName, expirationDate, securityCode, amount)
+
+  res.sendStatus(200)
+}

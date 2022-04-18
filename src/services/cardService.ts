@@ -122,3 +122,11 @@ export function checkBlockedCardForPurchase(isBlocked: boolean){
     throw {type: "bad_request", message: "Card is blocked"}
   }
 }
+
+export async function getCardByDetails(number: string, cardholderName: string, expirationDate: string){
+  const card = await cardRepository.findByCardDetails(number, cardholderName, expirationDate)
+    if(!card){
+      throw {type: "not_found", message: "Card not Found"}
+    }
+  return card
+}
