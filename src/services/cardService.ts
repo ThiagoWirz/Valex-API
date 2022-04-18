@@ -28,10 +28,9 @@ export async function activateCard(cardId: number, securityCode: string, passwor
 
   const card = await getCard(cardId);
 
+  checkIfIsVirtual(card.isVirtual)
   checkIfCardHasPassword(card)
-
   checkExpirationDate(card.expirationDate)
-  
   compareSecurityCode(securityCode, card.securityCode)
  
   const hashPassword = bcrypt.hashSync(password, 10)
@@ -41,7 +40,9 @@ export async function activateCard(cardId: number, securityCode: string, passwor
 
 export async function getBalance(cardId: number){
   await getCard(cardId)
+
   const trasanctions = await paymentRepository.findByCardId(cardId)
+
   const recharges = await recahargeRepository.findByCardId(cardId)
 
   const balance = balanceUtils.calculateBalance(recharges, trasanctions)
@@ -54,12 +55,16 @@ export async function getBalance(cardId: number){
 }
 
 export async function blockCard(cardId: number, password: string, isBlocking: boolean) {
+
   const card = await getCard(cardId)
-  checkIfIsVirtualForBlock(card.isVirtual)
+
+  checkIfIsVirtual(card.isVirtual)
   checkExpirationDate(card.expirationDate)
   checkBlockedCard(card.isBlocked, isBlocking)
   checkPassword(password, card.password)
+
   const virtualCards = await cardRepository.findByOriginalCardId(cardId)
+
   await updateVirtualCards(virtualCards, isBlocking)
 
   await cardRepository.update(cardId, {isBlocked: isBlocking})
@@ -67,6 +72,7 @@ export async function blockCard(cardId: number, password: string, isBlocking: bo
 
 export async function createVirtualCard(originalCardId: number, password: string){
   const originalCard = getCard(originalCardId)
+  
   checkPassword(password, (await originalCard).password)
 
   const virtualCard = cardUtils.formatVirtualCard(originalCard)
@@ -158,9 +164,9 @@ export function checkIfIsVirtualForCreation(isVirtual: boolean){
     }
 }
 
-export function checkIfIsVirtualForBlock(isVirtual: boolean){
+export function checkIfIsVirtual(isVirtual: boolean){
   if(isVirtual){
-    throw { type: "bad_request", message: "Cannot block a virtual card" }
+    throw { type: "bad_request", message: "Cannot activate or block a virtual card" }
   }
 }
 
@@ -168,4 +174,14 @@ export async function updateVirtualCards(virtualCards: any[], isBlocking: boolea
   for(let virtualCard of virtualCards){
     await cardRepository.update(virtualCard.id, {isBlocked: isBlocking})
   }
+}
+
+export function determineOriginalCardId(card: any){
+  let cardId : number
+  if(card.isVirtual){
+    cardId = card.originalCardId
+  }else{
+    cardId = card.id
+  }
+  return cardId
 }
